@@ -6,6 +6,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from starlette.responses import HTMLResponse
 
 from main1 import InterpApp
+import webbrowser
 
 app = FastAPI()
 
@@ -15,9 +16,9 @@ def read_root():
     content = """
     <body>
         <form action="/data" enctype="multipart/form-data" method="post">
-            <input name="file" type="file">
+            <input required name="file" type="file">
             <label for="lines">Кол-во слоёв</label>
-            <input id="lines" type="number" name="lines" min="15" max="50">
+            <input required id="lines" type="number" name="lines" min="15" max="50">
             <input type="submit">
         </form>
     </body>
@@ -31,8 +32,27 @@ def image(file: UploadFile = File(...), lines: int = Form()):
     with open(filename, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     os.chmod(filename, 777)
-    print(lines);
+    print(lines)
     inter = InterpApp(method='cubic', lines=lines, url=filename)
     return HTMLResponse(content=inter.printPlot())
 
     # return {"filename": file.filename}
+
+# brows = ['mozilla',
+#          'firefox',
+#          'netscape',
+#          'opera',
+#          'windows-default',
+#          'macosx',
+#          'safari',
+#          'google-chrome',
+#          'chrome',
+#          'chromium',
+#          'chromium-browser']
+
+# for i in range(len(brows)):
+#     try:
+#         webbrowser.get(using=f'{brows[i]}').open_new_tab('127.0.0.1:8000')
+#         break
+#     except:
+#         pass 
