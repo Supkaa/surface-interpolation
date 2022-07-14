@@ -9,6 +9,8 @@ from matplotlib.colors import LightSource
 from matplotlib import cm
 import data
 
+import eel
+
 
 class InterpApp:
     def __init__(self, method: str, lines: int, url: str):

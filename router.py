@@ -19,6 +19,12 @@ def read_root():
             <input required name="file" type="file">
             <label for="lines">Кол-во слоёв</label>
             <input required id="lines" type="number" name="lines" min="15" max="50">
+            <label for="method">Вид интерполяции</label>
+            <select required id="method" name="method">
+                <option>Кубический</option>
+                <option>Линейный</option>
+                <option>Ближайшего соседа</option>
+            </select>
             <input type="submit">
         </form>
     </body>
@@ -27,32 +33,20 @@ def read_root():
 
 
 @app.post("/data")
-def image(file: UploadFile = File(...), lines: int = Form()):
+def image(file: UploadFile = File(...), lines: int = Form(), method: str = Form()):
     filename = str(uuid.uuid4().hex) + '.xls'
     with open(filename, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     os.chmod(filename, 777)
     print(lines)
-    inter = InterpApp(method='cubic', lines=lines, url=filename)
+    match method:
+        case 'Ближайшего соседа':
+            methodc = 'nearest'
+        case 'Линейный':
+            methodc = 'linear'
+        case 'Кубический':
+            methodc = 'cubic'
+    inter = InterpApp(method=methodc, lines=lines, url=filename)
     return HTMLResponse(content=inter.printPlot())
 
     # return {"filename": file.filename}
-
-# brows = ['mozilla',
-#          'firefox',
-#          'netscape',
-#          'opera',
-#          'windows-default',
-#          'macosx',
-#          'safari',
-#          'google-chrome',
-#          'chrome',
-#          'chromium',
-#          'chromium-browser']
-
-# for i in range(len(brows)):
-#     try:
-#         webbrowser.get(using=f'{brows[i]}').open_new_tab('127.0.0.1:8000')
-#         break
-#     except:
-#         pass 
